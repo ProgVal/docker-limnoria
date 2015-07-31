@@ -16,7 +16,7 @@ ENV SUPYBOT_USE_SSL True
 ENV SUPYBOT_OWNER owner
 ENV SUPYBOT_OWNER_PASS owner
 RUN useradd -d /var/supybot/ -m -r -s /usr/sbin/nologin -U supybot
+COPY ["start.sh","/usr/local/bin"]
 USER supybot
 WORKDIR /var/supybot
 CMD ["/usr/local/bin/start.sh", "supybot.conf"]
-COPY ["start.sh","/usr/local/bin"]
