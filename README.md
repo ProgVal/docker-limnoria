@@ -17,6 +17,27 @@ Example:
                -e SUPYBOT_OWNER_PASS=adminpass \
                obosob/supybot
 
+This will build an initial config and start supybot in a detached container
+called "supybot".  Further configuration can be done from a query window
+with your bot in your IRC client.
+
+If you already have a configuration situated at /var/lib/mysupybot,
+make sure your configuration directory is owned by the supybot user
+and run the following command:
+
+    docker run -d --name mysupybot \
+               -v /var/lib/mysupybot \
+               -d SUPYBOT_HOME /var/lib/mysupybot \
+               obosob/supybot \
+               supybot mysupybot.conf
+
+or:
+
+    docker run -d --name mysupybot \
+               -v /var/lib/mysupybot:/var/supybot \
+               obosob/supybot \
+               supybot mysupybot.conf
+
 The environment values are:
 
     SUPYBOT_CHANNELS       # Channels to join (default: empty)
