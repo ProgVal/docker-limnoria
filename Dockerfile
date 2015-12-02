@@ -1,6 +1,6 @@
 FROM python:2.7
-MAINTAINER Obosob <obosob@riseup.net>
-RUN git clone https://github.com/Supybot/Supybot.git && cd Supybot && git checkout -b v0.83.4.1 && python ./setup.py install && rm -rf /Supybot
+MAINTAINER libcrack <devnull@libcrack.so>
+RUN git clone https://github.com/ProgVal/Limnoria.git && cd Limnoria && pip install -r requirements.txt && python ./setup.py install && rm -rf /Limnoria
 #ENV SUPYBOT_CHANNELS
 ENV SUPYBOT_HOME /var/supybot
 ENV SUPYBOT_IDENT supybot
