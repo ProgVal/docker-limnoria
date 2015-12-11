@@ -1,5 +1,7 @@
 # Limnoria
 
+[![](https://badge.imagelayers.io/libcrack/limnoria:latest.svg)](https://imagelayers.io/?images=libcrack/limnoria:latest 'imagelayers.io')
+
 Limnoria IRC bot docker container.
 
 Example run:
