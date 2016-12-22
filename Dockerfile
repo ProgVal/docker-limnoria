@@ -1,34 +1,46 @@
-FROM python:2.7
+FROM centos:7
 
-MAINTAINER libcrack <devnull@libcrack.so>
-
-RUN git clone https://github.com/ProgVal/Limnoria.git && \
-    cd Limnoria && \
-    pip install -r requirements.txt && \
-    python ./setup.py install && \
-    rm -rf /Limnoria
+LABEL summary="Limnoria Docker Image"
 
 #ENV SUPYBOT_CHANNELS
-ENV SUPYBOT_HOME /var/supybot
-ENV SUPYBOT_IDENT supybot
-ENV SUPYBOT_NETWORK freenode
-ENV SUPYBOT_NICK supybot
 #ENV SUPYBOT_PASSWORD
-ENV SUPYBOT_PORT 6697
-ENV SUPYBOT_PREFIXES !
 #ENV SUPYBOT_PREFIX_STRINGS
-ENV SUPYBOT_SERVER irc.freenode.net
-ENV SUPYBOT_USER supybot
-ENV SUPYBOT_USE_SSL True
-ENV SUPYBOT_OWNER owner
-ENV SUPYBOT_OWNER_PASS owner
+ENV HOME=/var/supybot \
+    SUPYBOT_HOME=${HOME} \
+    SUPYBOT_IDENT=supybot \
+    SUPYBOT_NETWORK=freenode \
+    SUPYBOT_NICK=supybot \
+    SUPYBOT_PORT=6697 \
+    SUPYBOT_PREFIXES=! \
+    SUPYBOT_SERVER=irc.freenode.net \
+    SUPYBOT_USER=supybot \
+    SUPYBOT_USE_SSL=True \
+    SUPYBOT_OWNER=owner \
+    SUPYBOT_OWNER_PASS=owner
 
-RUN useradd -d /var/supybot/ -m -r -s /usr/sbin/nologin -U supybot
+COPY plugin-sources /tmp
+RUN yum -y --setopt=tsflags=nodocs install epel-release git-core && \
+    yum -y --setopt=tsflags=nodocs install limnoria && \
+    # Avoid copy as it tries to alter permission bits which fail inside OS.
+    sed -i 's/shutil.copy/shutil.copyfile/g' /usr/bin/supybot && \
+    useradd -u 1001 -g 0 -d ${HOME}/ -m -r -s /usr/sbin/nologin default && \
+    mkdir -p ${HOME}/backup ${HOME}/data/tmp ${HOME}/logs/plugins ${HOME}/plugins ${HOME}/tmp && \
+    cd ${HOME}/plugins && \
+    while read f; do git clone $f ; done</tmp/plugin-sources && \
+    yum -y remove --setopt=clean_requirements_on_remove=1 git && \
+    yum clean all
 
 COPY ["start.sh","/usr/local/bin/"]
 
-USER supybot
+COPY supybot/ ${HOME}/
 
-WORKDIR /var/supybot
+RUN chown -R 1001:0 ${HOME} && \
+    chmod -R 666 ${HOME} && \
+    find ${HOME} -type d -exec chmod 777 {} +
 
-CMD ["/usr/local/bin/start.sh", "supybot.conf"]
+USER 1001
+
+WORKDIR ${HOME}
+
+# Exec form does not do parameter substitution.
+CMD "/usr/local/bin/start.sh" "${HOME}/supybot.conf"

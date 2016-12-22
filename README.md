@@ -66,3 +66,18 @@ SUPYBOT_USE_SSL        # Use SSL? (default: True)
 SUPYBOT_OWNER          # Owner identity for !identify (default: owner)
 SUPYBOT_OWNER_PASS     # Owner password for !identify (default: owner)
 ```
+
+Alternatively you can place your configuration in the supybot directory (under the name `supybot.conf`) and it will be picked up automatically.
+
+
+### Installing Plugins
+
+The Dockerfile supports installing plugins into Limnoria. It can `git clone` plugin repositories. The git repositories should be placed in (separated by newlines) `plugin-sources`.
+
+### Running on OpenShift
+
+To run locally on OpenShift it is recommended to use https://github.com/minishift/minishift to make it easy to start a cluster locally. Once your cluster is running and you have logged in via `oc` then simply running
+```
+oc new-app <fork-of-this-git-repository>
+```
+will automatically start and deploy your image to OpenShift.

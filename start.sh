@@ -1171,4 +1171,5 @@ mkdir -p backup conf data/tmp logs/plugins plugins tmp
 touch conf/{channels.conf,ignores.conf,userdata.conf,users.conf}
 supybot-adduser -u ${SUPYBOT_OWNER} -p ${SUPYBOT_OWNER_PASS} -c owner
 fi
+echo "Running supybot..."
 exec supybot $@
