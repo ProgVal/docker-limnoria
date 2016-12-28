@@ -26,6 +26,9 @@ RUN useradd -u 1001 -g 0 -d ${SUPYBOT_HOME}/ -m -r -s /usr/sbin/nologin supybot 
     yum -y -q --setopt=tsflags=nodocs install python-pip && \
     git clone https://github.com/ProgVal/Limnoria.git /tmp/Limnoria && \
     cd /tmp/Limnoria && \
+    # Avoid copy as it tries to alter permission bits which fail inside OS.
+    # This won't be required when testing is merged into master branch (PR 1279)
+    sed -i 's/shutil.copy/shutil.copyfile/g' scripts/supybot && \
     pip -q install -r requirements.txt && \
     python ./setup.py -q install && \
     yum -y -q remove --setopt=clean_requirements_on_remove=1 git-core && \
