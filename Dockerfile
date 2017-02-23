@@ -36,7 +36,7 @@ RUN useradd -u 1001 -g 0 -d ${SUPYBOT_HOME}/ -m -r -s /usr/sbin/nologin supybot 
 COPY plugin-sources /tmp
 RUN yum -y -q --setopt=tsflags=nodocs install git-core && \
     cd ${SUPYBOT_HOME}/plugins && \
-    while read f; do git clone $f ; done</tmp/plugin-sources && \
+    while read f; do git clone $f ; cd "${f##*/}" ; git log -n 1 ; cd .. ; done</tmp/plugin-sources && \
     rm -f /tmp/plugin-sources && \
     yum -y -q remove --setopt=clean_requirements_on_remove=1 git-core && \
     yum clean all
