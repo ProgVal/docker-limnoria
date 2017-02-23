@@ -1,6 +1,7 @@
 #!/bin/bash
 ARGS=( $@ ); FILE=${ARGS[$#-1]}
 if ! [ -f $FILE ]; then
+echo "Generating default configuration to $FILE..."
 cat - > $FILE <<EOF
 ###
 # Determines the bot's default nick.
@@ -33,14 +34,14 @@ supybot.ident: ${SUPYBOT_IDENT}
 # the current version of the bot will be generated if this is left
 # empty.
 #
-# Default value: 
+# Default value:
 ###
 supybot.user: ${SUPYBOT_USER}
 
 ###
 # Determines what networks the bot will connect to.
 #
-# Default value:  
+# Default value:
 ###
 supybot.networks: ${SUPYBOT_NETWORK}
 
@@ -49,7 +50,7 @@ supybot.networks: ${SUPYBOT_NETWORK}
 # technically passwords are server-specific and not network-specific,
 # but this is the best we can do right now.
 #
-# Default value: 
+# Default value:
 ###
 supybot.networks.${SUPYBOT_NETWORK}.password: ${SUPYBOT_PASSWORD}
 
@@ -58,23 +59,23 @@ supybot.networks.${SUPYBOT_NETWORK}.password: ${SUPYBOT_PASSWORD}
 # Each will be tried in order, wrapping back to the first when the cycle
 # is completed.
 #
-# Default value: 
+# Default value:
 ###
 supybot.networks.${SUPYBOT_NETWORK}.servers: ${SUPYBOT_SERVER}:${SUPYBOT_PORT}
 
 ###
 # Space-separated list of channels the bot will join only on ${SUPYBOT_NETWORK}.
 #
-# Default value:  
+# Default value:
 ###
 supybot.networks.${SUPYBOT_NETWORK}.channels: ${SUPYBOT_CHANNELS}
 
 ###
 # Determines what key (if any) will be used to join the channel.
 #
-# Default value: 
+# Default value:
 ###
-supybot.networks.${SUPYBOT_NETWORK}.channels.key: 
+supybot.networks.${SUPYBOT_NETWORK}.channels.key:
 
 ###
 # Determines whether the bot will attempt to connect with SSL sockets to
@@ -277,7 +278,7 @@ supybot.reply.showSimpleSyntax: False
 # simultaneously, and if any one of them is used as a prefix the bot
 # will assume it is being addressed.
 #
-# Default value: 
+# Default value:
 ###
 supybot.reply.whenAddressedBy.chars: ${SUPYBOT_PREFIXES}
 
@@ -288,9 +289,9 @@ supybot.reply.whenAddressedBy.chars: ${SUPYBOT_PREFIXES}
 # space-separated list of strings, so you can set something like '@@ ??'
 # and the bot will reply when a message is prefixed by either @@ or ??.
 #
-# Default value:  
+# Default value:
 ###
-supybot.reply.whenAddressedBy.strings: ${SUPYBOT_PREFIX_STRINGS} 
+supybot.reply.whenAddressedBy.strings: ${SUPYBOT_PREFIX_STRINGS}
 
 ###
 # Determines whether the bot will reply when people address it by its
@@ -312,9 +313,9 @@ supybot.reply.whenAddressedBy.nick.atEnd: False
 # Determines what extra nicks the bot will always respond to when
 # addressed by, even if its current nick is something else.
 #
-# Default value:  
+# Default value:
 ###
-supybot.reply.whenAddressedBy.nicks:  
+supybot.reply.whenAddressedBy.nicks:
 
 ###
 # Determines whether the bot will unidentify someone when that person
@@ -520,9 +521,9 @@ supybot.commands.defaultPlugins.importantPlugins: Plugin Admin Misc User Owner C
 # Determines what commands are currently disabled. Such commands will
 # not appear in command lists, etc. They will appear not even to exist.
 #
-# Default value:  
+# Default value:
 ###
-supybot.commands.disabled:  
+supybot.commands.disabled:
 
 ###
 # Determines whether the bot will defend itself against command-
@@ -651,7 +652,7 @@ supybot.directories.backup: ${SUPYBOT_HOME}/backup
 # can say: bot: 'config supybot.directories.plugins [config
 # supybot.directories.plugins], newPluginDirectory'.
 #
-# Default value:  
+# Default value:
 ###
 supybot.directories.plugins: ${SUPYBOT_HOME}/plugins
 
@@ -665,7 +666,7 @@ supybot.directories.log: ${SUPYBOT_HOME}/logs
 ###
 # Determines what plugins will be loaded.
 #
-# Default value:  
+# Default value:
 ###
 supybot.plugins: Admin Config Misc User Channel
 
@@ -791,7 +792,7 @@ supybot.plugins.alwaysLoadImportant: True
 #
 # Default value: anydbm cdb flat pickle
 ###
-supybot.databases: 
+supybot.databases:
 
 ###
 # Determines what filename will be used for the users database. This
@@ -917,17 +918,17 @@ supybot.protocols.irc.strictRfc: True
 # +x, which indicates to the auth services on those networks that you
 # should be given a fake host.
 #
-# Default value: 
+# Default value:
 ###
-supybot.protocols.irc.umodes: 
+supybot.protocols.irc.umodes:
 
 ###
 # Determines what vhost the bot will bind to before connecting to the
 # IRC server.
 #
-# Default value: 
+# Default value:
 ###
-supybot.protocols.irc.vhost: 
+supybot.protocols.irc.vhost:
 
 ###
 # Determines how many old messages the bot will keep around in its
@@ -999,9 +1000,9 @@ supybot.protocols.http.peekSize: 4096
 # Determines what proxy all HTTP requests should go through. The value
 # should be of the form 'host:port'.
 #
-# Default value: 
+# Default value:
 ###
-supybot.protocols.http.proxy: 
+supybot.protocols.http.proxy:
 
 ###
 # Determines whether the bot will ignore unregistered users by default.
@@ -1017,9 +1018,9 @@ supybot.defaultIgnore: False
 # string, the bot will attempt to find out its IP dynamically (though
 # sometimes that doesn't work, hence this variable).
 #
-# Default value: 
+# Default value:
 ###
-supybot.externalIP: 
+supybot.externalIP:
 
 ###
 # Determines what the default timeout for socket objects will be. This
@@ -1037,9 +1038,9 @@ supybot.defaultSocketTimeout: 10
 # then no PID file will be written. A restart is required for changes to
 # this variable to take effect.
 #
-# Default value: 
+# Default value:
 ###
-supybot.pidFile: 
+supybot.pidFile:
 
 ###
 # Determines whether the bot will automatically thread all commands.
@@ -1167,8 +1168,7 @@ supybot.capabilities: -owner -admin -trusted
 ###
 supybot.capabilities.default: True
 EOF
-mkdir -p backup conf data/tmp logs/plugins plugins tmp
-touch conf/{channels.conf,ignores.conf,userdata.conf,users.conf}
-supybot-adduser -u ${SUPYBOT_OWNER} -p ${SUPYBOT_OWNER_PASS} -c owner
+supybot-adduser -u ${SUPYBOT_OWNER} -p ${SUPYBOT_OWNER_PASS} -c owner ${SUPYBOT_HOME}/conf/users.conf
 fi
+echo "Running supybot..."
 exec supybot $@

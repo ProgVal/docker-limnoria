@@ -1,34 +1,57 @@
-FROM python:2.7
+FROM centos:7
 
 MAINTAINER libcrack <devnull@libcrack.so>
 
-RUN git clone https://github.com/ProgVal/Limnoria.git && \
-    cd Limnoria && \
-    pip install -r requirements.txt && \
-    python ./setup.py install && \
-    rm -rf /Limnoria
+LABEL summary="Limnoria Docker Image"
 
 #ENV SUPYBOT_CHANNELS
-ENV SUPYBOT_HOME /var/supybot
-ENV SUPYBOT_IDENT supybot
-ENV SUPYBOT_NETWORK freenode
-ENV SUPYBOT_NICK supybot
 #ENV SUPYBOT_PASSWORD
-ENV SUPYBOT_PORT 6697
-ENV SUPYBOT_PREFIXES !
 #ENV SUPYBOT_PREFIX_STRINGS
-ENV SUPYBOT_SERVER irc.freenode.net
-ENV SUPYBOT_USER supybot
-ENV SUPYBOT_USE_SSL True
-ENV SUPYBOT_OWNER owner
-ENV SUPYBOT_OWNER_PASS owner
+ENV SUPYBOT_HOME=/var/supybot \
+    SUPYBOT_IDENT=supybot \
+    SUPYBOT_NETWORK=freenode \
+    SUPYBOT_NICK=supybot \
+    SUPYBOT_PORT=6697 \
+    SUPYBOT_PREFIXES=! \
+    SUPYBOT_SERVER=irc.freenode.net \
+    SUPYBOT_USER=supybot \
+    SUPYBOT_USE_SSL=True \
+    SUPYBOT_OWNER=owner \
+    SUPYBOT_OWNER_PASS=owner \
+    LANG=C
 
-RUN useradd -d /var/supybot/ -m -r -s /usr/sbin/nologin -U supybot
+RUN useradd -u 1001 -g 0 -d ${SUPYBOT_HOME}/ -m -r -s /usr/sbin/nologin supybot && \
+    mkdir -p ${SUPYBOT_HOME}/backup ${SUPYBOT_HOME}/data/tmp ${SUPYBOT_HOME}/logs/plugins ${SUPYBOT_HOME}/plugins ${SUPYBOT_HOME}/tmp && \
+    yum -y -q --setopt=tsflags=nodocs install epel-release git-core && \
+    yum -y -q --setopt=tsflags=nodocs install python-pip && \
+    git clone https://github.com/ProgVal/Limnoria.git /tmp/Limnoria && \
+    cd /tmp/Limnoria && \
+    pip -q install -r requirements.txt && \
+    python ./setup.py -q install && \
+    yum -y -q remove --setopt=clean_requirements_on_remove=1 git-core && \
+    yum clean all && \
+    rm -rf /tmp/Limnoria
+
+# Plugin installation done in separate layer
+COPY plugin-sources /tmp
+RUN yum -y -q --setopt=tsflags=nodocs install git-core && \
+    cd ${SUPYBOT_HOME}/plugins && \
+    while read f; do git clone $f ; cd "${f##*/}" ; git log -n 1 ; cd .. ; done</tmp/plugin-sources && \
+    rm -f /tmp/plugin-sources && \
+    yum -y -q remove --setopt=clean_requirements_on_remove=1 git-core && \
+    yum clean all
 
 COPY ["start.sh","/usr/local/bin/"]
 
-USER supybot
+COPY supybot/ ${SUPYBOT_HOME}/
 
-WORKDIR /var/supybot
+RUN chown -R 1001:0 ${SUPYBOT_HOME} && \
+    chmod -R 666 ${SUPYBOT_HOME} && \
+    find ${SUPYBOT_HOME} -type d -exec chmod 777 {} +
 
-CMD ["/usr/local/bin/start.sh", "supybot.conf"]
+USER 1001
+
+WORKDIR ${SUPYBOT_HOME}
+
+# Exec form does not do parameter substitution.
+CMD "/usr/local/bin/start.sh" "${SUPYBOT_HOME}/supybot.conf"
